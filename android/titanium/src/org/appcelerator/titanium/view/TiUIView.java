@@ -338,7 +338,7 @@ public abstract class TiUIView
 			}
 		} else if (key.equals(TiC.PROPERTY_TOUCH_ENABLED)) {
 			doSetClickable(TiConvert.toBoolean(newValue));
-		} else if (key.equals(TiC.PROPERTY_VISIBLE)) {
+		} else if (key.equals(TiC.PROPERTY_VISIBLE) && nativeView != null) {
 			nativeView.setVisibility(TiConvert.toBoolean(newValue) ? View.VISIBLE : View.INVISIBLE);
 		} else if (key.equals(TiC.PROPERTY_ENABLED)) {
 			nativeView.setEnabled(TiConvert.toBoolean(newValue));
