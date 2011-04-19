@@ -10,7 +10,14 @@
 #import "AsyncSocket.h"
 #import "TiNetworkSocketProxy.h"
 
-@interface TiNetworkSocketTCPProxy : TiStreamProxy<AsyncSocketDelegate> {
+// Used to determine the type of processing 
+typedef enum {
+    TO_BUFFER,
+    TO_STREAM,
+    TO_CALLBACK,
+} ReadDestination;
+
+@interface TiNetworkSocketTCPProxy : TiStreamProxy<AsyncSocketDelegate, TiStreamInternal> {
     AsyncSocket* socket;
     SocketState internalState;
     NSCondition* listening;
@@ -34,9 +41,9 @@
     NSCondition* acceptCondition;
     BOOL accepting;
     
-    // Information used to hash asynch callbacks to tags.
+    // Information used to hash callbacks and asynch ops to tags.
     int asynchTagCount;
-    NSMutableDictionary* asynchCallbacks;
+    NSMutableDictionary* operationInfo;
     
     KrollCallback* connected;
     KrollCallback* accepted;

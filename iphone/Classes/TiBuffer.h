@@ -9,16 +9,30 @@
 #import "TiProxy.h"
 #import "TiBlob.h"
 
-// TODO: Finish implementation; this is just a skeleton for use w/TCP sockets
+// TODO: Support array-style access of bytes
 @interface TiBuffer : TiProxy {
     NSMutableData* data;
+    
 }
-@property(readonly, nonatomic) NSMutableData* data;
--(id)initWithData:(NSData*)data;
-
+@property(nonatomic, retain) NSMutableData* data;
+ 
 // Public API
--(void)clear:(id)_void;
+-(NSNumber*)append:(id)args;
+-(NSNumber*)insert:(id)args;
+-(NSNumber*)copy:(id)args;
+-(TiBuffer*)clone:(id)args;
+-(void)fill:(id)args;
+
+-(NSNumber*)clear:(id)_void;
+-(NSNumber*)release:(id)_void;
+
 -(TiBlob*)toBlob:(id)_void;
 -(NSString*)toString:(id)_void;
+
+@property(nonatomic,assign) NSNumber* length;
+
+// SPECIAL NOTES:
+// Ti.Buffer objects have an 'overloaded' Ti.Buffer[x] operation for x==int (making them behave like arrays).
+// See the code for how this works.
 
 @end

@@ -6,56 +6,10 @@
  */
 
 #import "TiStreamProxy.h"
-
+#import "TiUtils.h"
 @implementation TiStreamProxy
 
-#pragma mark Internals
-
-// Backend implementations - we have a few:
-// 1. Read/write
-// 2. Asynch read/write (may require different behavior than simple read/write)
-// TODO: 3. readAll() ? / adjust buffer size / hasBytes() / etc.
-
--(int)readToBuffer:(TiBuffer*)buffer offset:(int)offset length:(int)length
-{
-    [self throwException:@"UNIMPLEMENTED STREAM METHOD"
-               subreason:@"readIntoBuffer:offset:length:"
-                location:CODELOCATION];
-}
-
--(int)writeFromBuffer:(TiBuffer*)buffer offset:(int)offset length:(int)length
-{
-    [self throwException:@"UNIMPLEMENTED STREAM METHOD"
-               subreason:@"writeFromBuffer:offset:length:"
-                location:CODELOCATION];
-}
-
--(int)asynchRead:(TiBuffer *)buffer offset:(int)offset length:(int)length callback:(KrollCallback *)callback
-{
-    [self throwException:@"UNIMPLEMENTED STREAM METHOD"
-               subreason:@"asynchRead:offset:length:callback:"
-                location:CODELOCATION];
-}
-
--(int)asynchWrite:(TiBuffer *)buffer offset:(int)offset length:(int)length callback:(KrollCallback *)callback 
-{
-    [self throwException:@"UNIMPLEMENTED STREAM METHOD"
-               subreason:@"asynchWrite:offset:length:callback:"
-                location:CODELOCATION];
-}
-
-
 #pragma mark Public API : Functions
-
--(NSNumber*)isReadable:(id)_void
-{
-    return NUMBOOL(NO);
-}
-
--(NSNumber*)isWritable:(id)_void
-{
-    return NUMBOOL(NO);
-}
 
 -(NSNumber*)read:(id)args
 {
@@ -72,21 +26,30 @@
     
     ENSURE_ARG_AT_INDEX(buffer, args, 0, TiBuffer);
     ENSURE_ARG_OR_NIL_AT_INDEX(offset, args, 1, NSObject);
-    ENSURE_INT_COERCION(offset);
     ENSURE_ARG_OR_NIL_AT_INDEX(length, args, 2, NSObject);
-    ENSURE_INT_COERCION(length);
     
     if (offset == nil && length == nil) {
-        return NUMINT([self readToBuffer:buffer offset:0 length:[[buffer data] length]]);
+        return NUMINT([self readToBuffer:buffer offset:0 length:[[buffer data] length] callback:nil]);
     }
     else {
         if (offset == nil || length == nil) {
             // TODO: Codify behavior
             [self throwException:@"StreamException"
-                       subreason:@"Invalid OFFSET or LENGTH value"
+                       subreason:@"Requires OFFSET or LENGTH value"
                         location:CODELOCATION];
         }
-        return NUMINT([self readToBuffer:buffer offset:[offset intValue] length:[length intValue]]);
+        
+        int offsetValue = [TiUtils intValue:offset];
+        int lengthValue = [TiUtils intValue:length def:[[buffer data] length]];
+        
+        // TODO: Throw exception
+        if (offsetValue >= [[buffer data] length]) {
+            NSString* errorStr = [NSString stringWithFormat:@"[ERROR] Offset %d is past buffer bounds (length %d)",offsetValue,[[buffer data] length]];
+            NSLog(errorStr);
+            return NUMINT(-1);
+        }
+        
+        return NUMINT([self readToBuffer:buffer offset:offsetValue length:lengthValue callback:nil]);
     }
     
     return NUMINT(-1);
@@ -107,12 +70,10 @@
     
     ENSURE_ARG_AT_INDEX(buffer, args, 0, TiBuffer);
     ENSURE_ARG_OR_NIL_AT_INDEX(offset, args, 1, NSObject);
-    ENSURE_INT_COERCION(offset);
     ENSURE_ARG_OR_NIL_AT_INDEX(length, args, 2, NSObject);
-    ENSURE_INT_COERCION(offset);
     
     if (offset == nil && length == nil) {
-        return NUMINT([self writeFromBuffer:buffer offset:0 length:[[buffer data] length]]);
+        return NUMINT([self writeFromBuffer:buffer offset:0 length:[[buffer data] length] callback:nil]);
     }
     else {
         if (offset == nil || length == nil) {
@@ -121,7 +82,18 @@
                        subreason:@"Invalid OFFSET or LENGTH value"
                         location:CODELOCATION];
         }
-        return NUMINT([self writeFromBuffer:buffer offset:[offset intValue] length:[length intValue]]);
+        
+        int offsetValue = [TiUtils intValue:offset];
+        int lengthValue = [TiUtils intValue:length def:[[buffer data] length]];
+        
+        // TODO: Throw exception
+        if (offsetValue >= [[buffer data] length]) {
+            NSString* errorStr = [NSString stringWithFormat:@"[ERROR] Offset %d is past buffer bounds (length %d)",offsetValue,[[buffer data] length]];
+            NSLog(errorStr);
+            return NUMINT(-1);
+        }
+        
+        return NUMINT([self writeFromBuffer:buffer offset:offsetValue length:lengthValue callback:nil]);
     }
     
     return NUMINT(-1);
