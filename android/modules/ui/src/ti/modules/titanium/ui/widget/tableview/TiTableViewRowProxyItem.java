@@ -7,6 +7,7 @@
 package ti.modules.titanium.ui.widget.tableview;
 
 import java.util.ArrayList;
+import java.util.List; 
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.titanium.TiC;
@@ -154,7 +155,15 @@ public class TiTableViewRowProxyItem extends TiBaseTableViewItem
 	{
 		int i = 0;
 		TiViewProxy childProxies[] = viewProxy.getChildren();
-		for (TiUIView childView : view.getChildren()) {
+		List<TiUIView> childViews = view.getChildren();
+		
+		for (TiUIView childView : childViews) {
+			if (i == childProxies.length){
+				Log.w(LCAT, String.format("Number of child proxies (%d) does not match number of child views (%d).", 
+					childProxies.length, childViews.size()));
+				break;
+			}
+			
 			TiViewProxy childProxy = childProxies[i];
 			childView.setProxy(childProxy);
 			childView.processProperties(childProxy.getProperties());
