@@ -200,6 +200,8 @@
         ABPersonSortOrdering sortOrder = [TiUtils intValue:@"sortOrder" properties:arg def:ABPersonGetSortOrdering()];
         
         peopleRefs = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering([self addressBook], source, sortOrder);
+        
+        CFRelease(source);
     }
     else {
         peopleRefs = ABAddressBookCopyArrayOfAllPeople([self addressBook]);
