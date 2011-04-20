@@ -67,11 +67,13 @@
 -(UIView*)splash;
 -(void)loadSplash;
 -(UIView*)attachSplash;
--(NSDictionary*)launchOptions;
+-(NSMutableDictionary*)launchOptions;
 -(NSString*)remoteDeviceUUID;
 
 -(void)startNetwork;
 -(void)stopNetwork;
+
+-(void)clearRemoteNotification;
 
 -(void)showModalError:(NSString*)message;
 

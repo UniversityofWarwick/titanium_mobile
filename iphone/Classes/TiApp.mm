@@ -116,7 +116,7 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	}
 }
 
--(NSDictionary*)launchOptions
+-(NSMutableDictionary*)launchOptions
 {
 	return launchOptions;
 }
@@ -351,6 +351,7 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	}
 	if (notification!=nil)
 	{
+        [notification setValue:NUMBOOL(YES) forKey:@"___push_notification_launched_app___"];
 		[self generateNotification:notification];
 	}
 	
@@ -492,6 +493,11 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	return remoteNotification;
 }
 
+-(void)clearRemoteNotification
+{
+    RELEASE_TO_NIL(remoteNotification);
+}
+
 #pragma mark Push Notification Delegates
 
 #ifdef USE_TI_NETWORKREGISTERFORPUSHNOTIFICATIONS
@@ -501,6 +507,15 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	// NOTE: this is called when the app is *running* after receiving a push notification
 	// otherwise, if the app is started from a push notification, this method will not be 
 	// called
+    
+    // More importantly, we flag that the app was launched due to the push notification's
+    // action button being tapped when appropriate
+    if (application.applicationState != UIApplicationStateActive)
+    {
+        userInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+        [userInfo setValue:NUMBOOL(YES) forKey:@"___push_notification_launched_app___"];
+    }
+    
 	RELEASE_TO_NIL(remoteNotification);
 	[self generateNotification:userInfo];
 	

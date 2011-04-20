@@ -151,6 +151,17 @@ NSString* const INADDR_ANY_token = @"INADDR_ANY";
 	[self removeEventListener:newargs];
 }
 
+// Socket submodule
+#ifdef USE_TI_NETWORKSOCKET
+-(TiProxy*)Socket
+{
+    if (socketProxy == nil) {
+        socketProxy = [[TiNetworkSocketProxy alloc] _initWithPageContext:[self pageContext]];
+    }
+    return socketProxy;
+}
+#endif
+
 - (NSNumber*)online
 {
 	if (state!=TiNetworkConnectionStateNone && state!=TiNetworkConnectionStateUnknown)
@@ -223,6 +234,28 @@ MAKE_SYSTEM_PROP(NOTIFICATION_TYPE_SOUND,3);
 	return result;
 }
 
+-(NSDictionary*)eventForPushCallbackWithData:(NSMutableDictionary*)data AndAdditionalFlag:(NSString*)flag
+{
+    id event = nil;
+    BOOL pushLaunchedApp = [[data valueForKey:@"___push_notification_launched_app___"] boolValue];
+    
+    if (pushLaunchedApp) {
+        data = [NSMutableDictionary dictionaryWithDictionary:data];
+        
+        [data removeObjectForKey:@"___push_notification_launched_app___"];
+    }
+    
+    if (flag) {
+        event = [NSDictionary dictionaryWithObjectsAndKeys:data, @"data", NUMBOOL(pushLaunchedApp), @"pushLaunchedApp", NUMBOOL(YES), flag, nil];
+    }
+    else
+    {
+        event = [NSDictionary dictionaryWithObjectsAndKeys:data, @"data", NUMBOOL(pushLaunchedApp), @"pushLaunchedApp", nil];
+    }
+    
+    return event;
+}
+
 -(void)registerForPushNotifications:(id)args
 {
 	ENSURE_SINGLE_ARG(args,NSDictionary);
@@ -274,8 +307,10 @@ MAKE_SYSTEM_PROP(NOTIFICATION_TYPE_SOUND,3);
 	id currentNotification = [[TiApp app] remoteNotification];
 	if (currentNotification!=nil && pushNotificationCallback!=nil)
 	{
-		id event = [NSDictionary dictionaryWithObject:currentNotification forKey:@"data"];
+		id event = [self eventForPushCallbackWithData:currentNotification AndAdditionalFlag:@"firedFromRegister"];
 		[self _fireEventToListener:@"remote" withObject:event listener:pushNotificationCallback thisObject:nil];
+        
+        [[TiApp app] clearRemoteNotification];
 	}
 }
 
@@ -307,8 +342,10 @@ MAKE_SYSTEM_PROP(NOTIFICATION_TYPE_SOUND,3);
 	// called by TiApp
 	if (pushNotificationCallback!=nil)
 	{
-		id event = [NSDictionary dictionaryWithObject:userInfo forKey:@"data"];
+		id event = [self eventForPushCallbackWithData:(NSMutableDictionary*)userInfo AndAdditionalFlag:nil];
 		[self _fireEventToListener:@"remote" withObject:event listener:pushNotificationCallback thisObject:nil];
+        
+        [[TiApp app] clearRemoteNotification];
 	}
 }
 

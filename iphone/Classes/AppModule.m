@@ -344,6 +344,18 @@ extern NSString * const TI_APPLICATION_GUID;
 	return [[TiApp app] launchOptions];
 }
 
+-(void)clearArguments:(id)args
+{
+    ENSURE_ARRAY(args);
+    
+    NSMutableDictionary *lo = [[TiApp app] launchOptions];
+    
+    for (NSString *key in args)
+    {
+        [lo removeObjectForKey:key];
+    }
+}
+
 -(id)iD
 {
 	return TI_APPLICATION_ID;
