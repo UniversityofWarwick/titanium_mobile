@@ -53,6 +53,8 @@
 - (void)handleWillShowViewController:(UIViewController *)viewController;
 - (void)handleDidShowViewController:(UIViewController *)viewController;
 
+@property (nonatomic, assign, readonly) NSNumber* windowCount;
+
 @end
 
 #endif

@@ -495,6 +495,10 @@
 	[parentOrientationController childOrientationControllerChangedFlags:self];
 }
 
+-(NSNumber*)windowCount {
+    return NUMINT([controller.viewControllers count]);
+}
+
 @end
 
 #endif
