@@ -38,7 +38,7 @@ class IPhone(object):
 		iphone_project_resources = os.path.join(project_dir,'Resources','iphone')
 		if os.path.exists(iphone_project_resources):
 			shutil.rmtree(iphone_project_resources)
-		shutil.copytree(os.path.join(template_dir,'resources'),iphone_project_resources)
+		shutil.copytree(os.path.join(template_dir,'resources'),iphone_project_resources,ignore=shutil.ignore_patterns('.*'))
 		
 		plist = open(os.path.join(template_dir,'Info.plist'),'r').read()
 
