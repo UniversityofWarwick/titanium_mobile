@@ -15,8 +15,8 @@ import jspacker
 from csspacker import CSSPacker
 from module import ModuleDetector
 
-ignoreFiles = ['.gitignore', '.cvsignore', '.DS_Store'];
-ignoreDirs = ['.git','.svn','_svn','CVS','android','iphone'];
+ignoreFiles = ['.hgignore','.gitignore', '.cvsignore', '.DS_Store']
+ignoreDirs = ['.hg','.git','.svn','_svn','CVS','android','iphone']
 
 HEADER = """/**
  * Appcelerator Titanium Mobile
