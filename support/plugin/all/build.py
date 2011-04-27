@@ -37,7 +37,7 @@ def warn(msg):
 
 def validate_license():
 	c = open('LICENSE').read()
-	if c.find(plugin_license_default)!=1:
+	if c.find(plugin_license_default)!=-1:
 		warn('please update the LICENSE file with your license text before distributing')
 			
 def validate_manifest():
