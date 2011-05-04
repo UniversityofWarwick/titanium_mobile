@@ -459,6 +459,12 @@
 
 -(void)scrollViewDidScroll:(UIScrollView *)sender
 {
+	if ([self.proxy _hasListeners:@"scrolling"])
+	{
+		[self.proxy fireEvent:@"scrolling" withObject:[NSDictionary dictionaryWithObjectsAndKeys:
+													  NUMINT(scrollview.contentOffset.x),@"xOffset",nil]];
+	}
+	
 	//switch page control at 50% across the center - this visually looks better
     CGFloat pageWidth = scrollview.frame.size.width;
 	int lastPage = [pageControl currentPage];
