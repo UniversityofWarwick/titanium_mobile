@@ -713,6 +713,7 @@ else{\
 
 - (void)viewDidAppear:(BOOL)animated;     // Called when the view has been fully transitioned onto the screen. Default does nothing
 {
+    [self fireEvent:@"appeared" withObject:nil propagate:NO];
 	animating = NO;
 	[self updateTitleView];
 }
