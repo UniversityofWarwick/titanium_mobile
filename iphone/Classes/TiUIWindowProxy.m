@@ -724,6 +724,8 @@ else{\
 
 - (void)viewDidDisappear:(BOOL)animated;  // Called after the view was dismissed, covered or otherwise hidden. Default does nothing
 {
+    [self fireEvent:@"disappeared" withObject:nil propagate:NO]
+    
 	animating = NO;
 	[self updateTitleView];
 }
