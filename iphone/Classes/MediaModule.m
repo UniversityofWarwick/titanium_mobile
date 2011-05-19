@@ -911,6 +911,11 @@ if (![TiUtils isIOS4OrGreater]) { \
 	if (picker!=nil)
 	{
 		[[TiApp app] hideModalController:picker animated:animatedPicker];
+        if(!animatedPicker)
+        {
+            [self fireEvent:@"camerahidden" withObject:nil];
+        }
+        
 		[self destroyPicker];        
 	}
 }
