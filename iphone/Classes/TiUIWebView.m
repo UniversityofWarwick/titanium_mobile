@@ -100,7 +100,7 @@ NSString * const kTitaniumJavascript = @"Ti.App={};Ti.API={};Ti.App._listeners={
 		
 		webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 10, 1)];
 		webview.delegate = self;
-		webview.opaque = NO;
+		webview.opaque = YES;
 		webview.backgroundColor = [UIColor whiteColor];
 		webview.contentMode = UIViewContentModeRedraw;
 		[self addSubview:webview];
