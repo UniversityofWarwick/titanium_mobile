@@ -62,8 +62,6 @@ public class TiSound
 	
 	public static final String EVENT_COMPLETE_JSON = "{ type : '" + EVENT_COMPLETE + "' }";
 
-	private static final float VOLUME_SCALING_FACTOR = 3.0f;
-
 	private boolean paused = false;
 	private boolean looping = false;
 	private boolean prepared = false;
@@ -275,7 +273,7 @@ public class TiSound
 				this.volume = volume; // Store in 0.0 to 1.0, scale when setting hw
 			}
 			if (mp != null) {
-				float scaledVolume = this.volume * VOLUME_SCALING_FACTOR;
+				float scaledVolume = this.volume;
 				mp.setVolume(scaledVolume, scaledVolume);
 			}
 		} catch (Throwable t) {

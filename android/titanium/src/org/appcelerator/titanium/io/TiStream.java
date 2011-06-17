@@ -9,16 +9,15 @@ package org.appcelerator.titanium.io;
 
 import java.io.IOException;
 
-import org.appcelerator.titanium.proxy.BufferProxy;
+import ti.modules.titanium.BufferProxy;
 
 
 public interface TiStream
 {
-	int read(BufferProxy buffer) throws IOException;
-	int read(BufferProxy buffer, int offset, int length) throws IOException;
-	int write(BufferProxy buffer) throws IOException;
-	int write(BufferProxy buffer, int offset, int length) throws IOException;
-	boolean isWriteable();
+	int read(Object args[]) throws IOException;
+	int write(Object args[]) throws IOException;
+	boolean isWritable();
 	boolean isReadable();
+	void close() throws IOException;
 }
 
