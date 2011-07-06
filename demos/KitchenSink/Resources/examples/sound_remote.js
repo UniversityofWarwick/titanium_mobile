@@ -1,18 +1,17 @@
 var win = Titanium.UI.currentWindow;
 
 var url = Titanium.UI.createTextField({
-    value:'http://dl.dropbox.com/u/2225394/Ken%20Ashcorp%20-%20TASTELESS%20%281%29.mp3',
-    color:'#336699',
-    returnKeyType:Titanium.UI.RETURNKEY_GO,
-    keyboardType:Titanium.UI.KEYBOARD_URL,
-    clearButtonMode: Titanium.UI.INPUT_BUTTONMODE_ONFOCUS,
-    hintText:'url',
-    textAlign:'left',
-    clearOnEdit:false, // this set to true was clearing the field on launch
-    height:35,
-    top:10,
-    width:300,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+	value:'http://watoo.net:8000/INTRODUCTION.mp3',
+	color:'#336699',
+	returnKeyType:Titanium.UI.RETURNKEY_GO,
+	keyboardType:Titanium.UI.KEYBOARD_URL,
+	hintText:'url',
+	textAlign:'left',
+	clearOnEdit:false, // this set to true was clearing the field on launch
+	height:35,
+	top:10,
+	width:300,
+	borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
 });
 
 var streamButton = Titanium.UI.createButton({
@@ -123,19 +122,33 @@ var volumeUpLabel = Ti.UI.createLabel({
     textAlign: 'center'
 });
 
+var streamSize1 = Ti.UI.createButton({
+	title:'Small buffer',
+	top:240,
+	left:10,
+	width:100,
+	height:40
+});
+var streamSize2 = Ti.UI.createButton({
+	title:'Default buffer',
+	top:240,
+	left:110,
+	width:100,
+	height:40
+});
+var streamSize3 = Ti.UI.createButton({
+	title:'Large buffer',
+	top:240,
+	right:10,
+	width:100,
+	height:40	
+});
+
 Ti.UI.currentWindow.add(url);
 Ti.UI.currentWindow.add(streamButton);
 Ti.UI.currentWindow.add(pauseButton);
 Ti.UI.currentWindow.add(progressLabel);
 Ti.UI.currentWindow.add(stateLabel);
-Ti.UI.currentWindow.add(timeLapsedLabel);
-Ti.UI.currentWindow.add(progressSlider);
-Ti.UI.currentWindow.add(timeRemainingLabel);
-Ti.UI.currentWindow.add(warningLabel);
-Ti.UI.currentWindow.add(volumeDownLabel);
-Ti.UI.currentWindow.add(volumeSlider);
-Ti.UI.currentWindow.add(volumeUpLabel);
-
 var streamer = Ti.Media.createAudioPlayer();
 
 // support background audio
@@ -143,23 +156,30 @@ Ti.Media.audioSessionMode = Ti.Media.AUDIO_SESSION_MODE_PLAYBACK;
 
 streamButton.addEventListener('click',function()
 {
-    if (streamButton.title == 'Stop Stream')
-    {
-        progressLabel.text = 'Stopped';
-        streamer.stop();
-        pauseButton.enabled = false;
-        pauseButton.title = 'Pause Streaming';
-        streamButton.title = "Start Streaming";
-    }
-    else
-    {
-        progressLabel.text = 'Starting ...';
-        streamer.url = url.value;
-        streamer.start();
-        pauseButton.enabled = true;
-        pauseButton.title = 'Pause Streaming';
-        streamButton.title = "Stop Stream";
-    }
+	if (streamButton.title == 'Stop Stream')
+	{
+		progressLabel.text = 'Stopped';
+		streamer.stop();
+		pauseButton.enabled = false;
+		streamSize1.enabled = true;
+		streamSize2.enabled = true;
+		streamSize3.enabled = true;
+		pauseButton.title = 'Pause Streaming';
+		streamButton.title = "Start Streaming";
+	}
+	else
+	{
+		progressLabel.text = 'Starting ...';
+		streamer.url = url.value;
+		streamer.start();
+		pauseButton.enabled = true;
+		streamSize1.enabled = false;
+		streamSize2.enabled = false;
+		streamSize3.enabled = false;
+
+		pauseButton.title = 'Pause Streaming';
+		streamButton.title = "Stop Stream";
+	}
 });
 
 pauseButton.addEventListener('click', function()
@@ -235,6 +255,21 @@ var updateTimeLabels = function(timeLapsed, duration)
 };
 
 var progressSliding = false;
+streamSize1.addEventListener('click', function()
+{
+	streamer.bufferSize = 512;
+	Ti.API.log('Set streamer buffer size to ' + streamer.bufferSize);
+});
+streamSize2.addEventListener('click', function()
+{
+	streamer.bufferSize = 2048;
+	Ti.API.log('Set streamer buffer size to ' + streamer.bufferSize);
+});
+streamSize3.addEventListener('click', function()
+{
+	streamer.bufferSize = 4096;
+	Ti.API.log('Set streamer buffer size to ' + streamer.bufferSize);
+});
 
 streamer.addEventListener('progress',function(e)
 {
